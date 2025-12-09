@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Media Server</title>
+    <style>
+        :root {
+            --color-primary: #00d4ff;
+            --color-secondary: #9d4edd;
+            --color-text: #ffffff;
+            --color-text-secondary: #b0b0b0;
+            --color-background: linear-gradient(135deg, #0a0e27 0%, #1a0033 50%, #0d1b2a 100%);
+            --color-surface: rgba(255, 255, 255, 0.05);
+            --color-border: rgba(255, 255, 255, 0.1);
+            --radius-base: 12px;
+            --shadow-glow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .logo::before {
+            content: '✦';
+            color: var(--color-primary);
+            font-size: 28px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--color-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 40px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            animation: headerPulse 10s ease-in-out infinite;
+            filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.1));
+        }
+
+        @keyframes headerPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.1)) drop-shadow(0 0 4px rgba(157, 78, 221, 0.05));
+                text-shadow: 0 0 3px rgba(0, 212, 255, 0.15);
+            }
+            50% {
+                filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.25)) drop-shadow(0 0 10px rgba(157, 78, 221, 0.15));
+                text-shadow: 0 0 6px rgba(0, 212, 255, 0.25), 0 0 10px rgba(157, 78, 221, 0.15);
+            }
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            margin-bottom: 80px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-primary);
+            border: 2px solid var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Content Section */
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--color-text);
+        }
+
+        .section-title::before {
+            content: "✦";
+            color: rgb(255, 182, 0);
+            font-size: 38px;
+        }
+
+        /* Media Grid */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .media-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .media-card:hover {
+            border-color: var(--color-primary);
+            background: rgba(0, 212, 255, 0.08);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .media-poster {
+        width: 100%;
+        /* aspect-ratio: 1 / 1.2; */
+        background: linear-gradient(to right bottom, rgba(157, 78, 221, 0.2), rgba(0, 212, 255, 0.2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 140px;
+        color: rgba(124, 120, 120, 0.87);
+        position: relative;
+        overflow: hidden;
+        }
+
+        .media-info {
+            padding: 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .media-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-text);
+            text-align: center;
+            }
+
+        .media-meta {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .play-btn {
+            background: var(--color-primary);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: auto;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        /* About Section */
+        .about-content {
+            max-width: 1400px;
+        }
+
+        .about-content p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            color: var(--color-text);
+        }
+
+        .about-subtitle {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: var(--color-primary);
+        }
+
+        .about-footer {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-base);
+            margin: 10% auto;
+            padding: 40px;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+        }
+
+        .modal-content h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4ff, #9d4edd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-content h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .modal-body {
+            color: var(--color-text);
+            line-height: 1.8;
+        }
+
+        .modal-body p {
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        .modal-body a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .modal-body a:hover {
+            color: var(--color-secondary);
+            text-decoration: underline;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .modal-body li {
+            margin-bottom: 12px;
+            padding-left: 24px;
+            position: relative;
+            font-size: 15px;
+        }
+
+        .modal-body li::before {
+            content: '▪';
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+        }
+
+        .modal-footer-text {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            font-style: italic;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            flex: 1;
+            max-width: 250px;
+        }
+
+        .close {
+            color: var(--color-text-secondary);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--color-primary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        footer p {
+            margin: 8px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 16px 20px;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 16px;
+                margin-bottom: 40px;
+            }
+
+            .hero h3 {
+                font-size: 16px;
+            }
+
+            .content {
+                padding: 0 20px 60px;
+            }
+
+            .media-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .media-card {
+                max-width: 100%;
+            }
+
+            .media-poster {
+                aspect-ratio: 16/9;
+                font-size: 110px;
+            }
+
+            nav {
+                gap: 16px;
+                font-size: 12px;
+            }
+
+            .logo {
+                font-size: 18px;
+                gap: 6px;
+                white-space: nowrap;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .section {
+                margin-bottom: 60px;
+            }
+
+            .section-title {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .modal-content {
+                margin: 5% 20px;
+                padding: 30px 20px;
+                max-height: 90vh;
+            }
+
+            .modal-content h2 {
+                font-size: 24px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                max-width: 100%;
+            }
+
+            footer {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero h3 {
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .logo {
+                font-size: 16px;
+            }
+
+            .media-poster {
+                font-size: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">Galaxy Media Server</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Galaxy Media Server</h1>
+        <h3>Your personal entertainment hub. Stream movies and TV shows from our private Plex server.</h3><br>
+        <div class="cta-buttons">
+            <button class="btn btn-primary">Start Watching</button>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Classics Section -->
+        <section class="section" id="classics">
+            <h2 class="section-title">Classics</h2>
+            <div class="media-grid">
+                <div class="media-card">
+                    <div class="media-poster">🍿</div>
+                    <div class="media-info">
+                        <div class="media-title">Dramas</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+                <div class="media-card">
+                    <div class="media-poster">🎭</div>
+                    <div class="media-info">
+                        <div class="media-title">Seasonal</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+                <div class="media-card">
+                    <div class="media-poster">🎞️</div>
+                    <div class="media-info">
+                        <div class="media-title">Westerns</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modern Section -->
+        <section class="section" id="modern">
+            <h2 class="section-title">Modern</h2>
+            <div class="media-grid">
+                <div class="media-card">
+                    <div class="media-poster">🎥</div>
+                    <div class="media-info">
+                        <div class="media-title">Sci-Fi</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+                <div class="media-card">
+                    <div class="media-poster">📺</div>
+                    <div class="media-info">
+                        <div class="media-title">Thrillers</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+                <div class="media-card">
+                    <div class="media-poster">🎬</div>
+                    <div class="media-info">
+                        <div class="media-title">Latest Releases</div>
+                        <div class="media-meta"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="section" id="about-section">
+            <h2 class="section-title">About Galaxy Media Server</h2>
+            <div class="about-content">
+                <h3>Galaxy Media Server is your personal entertainment gateway, combining the power of a private Plex media server with an extensive curated library of timeless classics and modern favorites. Designed for discerning entertainment enthusiasts, our platform delivers unlimited streaming access to your entire media collection in one elegant, unified interface.</h3>
+                
+                <h3 class="about-subtitle">What We Offer</h3>
+                <p>Our comprehensive multimedia platform provides seamless access to decades of entertainment across multiple categories. From golden-age cinema and legendary television series to contemporary blockbusters and critically acclaimed new releases, Galaxy Media Server brings your entire entertainment world together. Whether you're seeking nostalgia or discovering what's trending today, our curated collections ensure there's always something exceptional to watch.</p>
+                
+                <h3 class="about-subtitle">Premium Experience</h3>
+                <p>Built on the foundation of private server technology, Galaxy Media Server prioritizes your privacy and control. Stream anywhere, anytime, with no restrictions. Our intuitive interface makes discovering content effortless, while advanced features give you complete command over your media library. Enjoy unlimited concurrent streams, personalized recommendations, and 4K quality options—all from your own private server.</p>
+                
+                <h3 class="about-subtitle">Your Entertainment, Your Way</h3>
+                <p>We believe entertainment should be personal. That's why Galaxy Media Server empowers you to build your perfect library. Organize, categorize, and enjoy media exactly how you want it. From family-friendly classics to adult-oriented contemporary content, create playlists, mark favorites, and share access with trusted friends and family members. Complete control. Complete privacy. Complete entertainment freedom.</p>
+                
+                <p class="about-footer">Galaxy Media Server—where timeless entertainment meets modern technology.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer id="about">
+        <p>&copy; 2025 Galaxy Media Server. All rights reserved.</p>
+        <p>Your personal entertainment experience, powered by your private server.</p>
+    </footer>
+
+    <div id="accessModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Access Galaxy Media Server</h2>
+            <div class="modal-body">
+                <p>Welcome to Galaxy Media Server, your personal entertainment destination. To begin streaming our curated collection of timeless classics and popular television series, you'll need to set up your access through Plex.</p>
+                
+                <h3>Getting Started</h3>
+                <p><strong>Sign up or login at <a href="https://www.plex.tv" target="_blank">Plex.tv</a></strong> to access this exclusive server. Please note: Galaxy Media Server is <strong>invite-only</strong>, ensuring a premium experience for our curated community of entertainment enthusiasts.</p>
+                
+                <h3>What You'll Enjoy</h3>
+                <ul>
+                    <li><strong>Classic Cinema:</strong> Explore our extensive collection of timeless films spanning multiple decades and genres—from iconic dramas and adventures to beloved comedies that have stood the test of time.</li>
+                    <li><strong>Popular Television:</strong> Binge complete series including legendary shows and contemporary favorites. Discover golden-age classics alongside modern hits, all available at your fingertips.</li>
+                    <li><strong>Media Requests:</strong> Can't find what you're looking for? Simply submit a media request, and our team will work to add it to the server. Your entertainment preferences shape our growing library.</li>
+                </ul>
+                
+                <h3>Privacy & Control</h3>
+                <p>As an invite-only private server, Galaxy Media Server prioritizes your privacy and viewing experience. Stream anywhere, anytime, with complete control over your personal library and preferences.</p>
+                
+                <p class="modal-footer-text">If you don't have an invitation code yet, please reach out to your Galaxy Media Server administrator for access.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary modal-btn" onclick="window.open('https://www.plex.tv', '_blank')">Go to Plex.tv</button>
+                <button class="btn btn-secondary modal-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('accessModal');
+        const closeBtn = document.querySelector('.close');
+
+        // Open modal when "Start Watching" button is clicked
+        document.querySelectorAll('.cta-buttons .btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('Start')) {
+                    modal.style.display = 'block';
+                }
+            });
+        });
+
+        // Close modal when X is clicked
+        closeBtn.addEventListener('click', closeModal);
+
+        // Close modal when clicking outside of it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
