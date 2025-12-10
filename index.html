@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personal entertainment hub. Stream movies and TV shows from our private Plex server.">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Galaxy Media">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0e27' width='192' height='192'/><circle cx='96' cy='96' r='88' fill='%2300d4ff'/><circle cx='96' cy='96' r='80' fill='%239d4edd'/><text x='96' y='115' font-size='80' font-weight='bold' fill='%23fff' text-anchor='middle'>★</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0e27' width='192' height='192' rx='44'/><circle cx='96' cy='96' r='88' fill='%2300d4ff'/><circle cx='96' cy='96' r='80' fill='%239d4edd'/><text x='96' y='115' font-size='80' font-weight='bold' fill='%23fff' text-anchor='middle'>★</text></svg>">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Galaxy Media Server</title>
-    <!-- moved to root-->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -161,6 +168,39 @@
 
         function closeModal() {
             modal.style.display = 'none';
+        }
+
+        // Service Worker Registration for PWA Support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registered:', registration);
+                        
+                        // Check for updates periodically
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000); // Check every minute
+                    })
+                    .catch(error => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+
+                // Listen for controller change (new service worker activated)
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    console.log('New Service Worker activated');
+                });
+            });
+
+            // Optional: Notify user when update is available
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.addEventListener('message', event => {
+                    if (event.data.type === 'SW_UPDATE_AVAILABLE') {
+                        console.log('App update available. Reload to update.');
+                        // You can show a toast/notification to user here
+                    }
+                });
+            }
         }
     </script>
 </body>
